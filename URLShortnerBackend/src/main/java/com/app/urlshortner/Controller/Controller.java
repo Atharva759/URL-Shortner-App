@@ -1,5 +1,8 @@
 package com.app.urlshortner.Controller;
+import com.app.urlshortner.DTO.ShortenUrlRequest;
+import com.app.urlshortner.DTO.ShortenUrlResponse;
 import com.app.urlshortner.Service.UrlService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,7 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
+@RequestMapping("/api")
 public class Controller {
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     private final UrlService urlService;
 
@@ -23,9 +30,17 @@ public class Controller {
                 .build();
     }
 
+
     @PostMapping("/shorten")
-    public String getShortenUrl(@RequestBody String url){
-        return urlService.getShortenUrl(url);
+    public ResponseEntity<ShortenUrlResponse> getShortenUrl(@RequestBody ShortenUrlRequest request){
+        String code = urlService.getShortenUrl(
+                request.getOriginalUrl(),
+                request.getCustomAlias(),
+                request.getExpiresAt()
+        );
+        String shortenUrl = baseUrl+"/api/"+code;
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ShortenUrlResponse(code, shortenUrl));
     }
 
 }
