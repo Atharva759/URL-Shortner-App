@@ -53,7 +53,7 @@ function ShortenForm() {
       if (res.ok) {
         const data = await res.json();
         const frontendUrl = `${import.meta.env.VITE_FRONTEND_URL}/${
-          data.shortCode
+          data.code
         }`;
         setShortUrl(frontendUrl);
         setMessage("URL shortened successfully!");
