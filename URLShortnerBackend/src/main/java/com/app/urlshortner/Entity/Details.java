@@ -25,7 +25,7 @@ public class Details {
     private String code;
 
     @Column(nullable = false,length = 2048)
-    private String OriginalUrl;
+    private String originalUrl;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

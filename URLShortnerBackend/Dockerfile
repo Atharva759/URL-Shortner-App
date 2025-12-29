@@ -1,14 +1,30 @@
-# Use official Java 25 JDK image
-FROM eclipse-temurin:25-jdk
+# ---------- BUILD STAGE ----------
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy the Spring Boot JAR (wildcard will pick the JAR in target/)
-COPY target/*.jar app.jar
+# Copy Maven files first (better cache)
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
 
-# Expose port your app will run on
+RUN chmod +x mvnw
+RUN ./mvnw -B -q dependency:go-offline
+
+# Copy source
+COPY src src
+
+# Build jar
+RUN ./mvnw clean package -DskipTests
+
+# ---------- RUNTIME STAGE ----------
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+# Copy jar from build stage
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

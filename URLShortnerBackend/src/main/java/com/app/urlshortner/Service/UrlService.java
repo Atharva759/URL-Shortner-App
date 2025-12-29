@@ -1,13 +1,12 @@
 package com.app.urlshortner.Service;
 
-import com.app.urlshortner.Repository.DetailsRepo;
 import com.app.urlshortner.Entity.Details;
+import com.app.urlshortner.Repository.DetailsRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -29,7 +28,7 @@ public class UrlService {
     }
 
 
-    public String getShortenUrl(String originalUrl,String customAlias,LocalDateTime expiresAt) {
+    public String getShortenUrl(String OriginalUrl,String customAlias,LocalDateTime expiresAt) {
         String code;
         boolean isCustom = false;
 
@@ -45,7 +44,7 @@ public class UrlService {
         }
         Details details = Details.builder()
                 .code(code)
-                .OriginalUrl(originalUrl)
+                .originalUrl(OriginalUrl)
                 .expiresAt(expiresAt)
                 .customAlias(isCustom)
                 .build();
